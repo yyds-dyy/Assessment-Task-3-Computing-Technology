@@ -1,0 +1,3256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CADRE Rovers: A Project by NASA</title>
+
+    <style>
+        /* Colours */
+        :root {
+            --dark-blue: #091c38;
+            --navy: #0a2854;
+            --blue: #1677ff;
+            --cyan: #38bdf8;
+            --light-blue: #eaf4ff;
+            --white: #ffffff;
+            --text: #10233f;
+            --grey: #52657b;
+            --border: #c8ddf3;
+            --red: #db4d62;
+        }
+
+        /* General settings */
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 110px;
+        }
+
+        body {
+            margin: 0;
+            background: #f8fbff;
+            color: var(--text);
+            font-family: "Courier New", Courier, monospace;
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        button {
+            font: inherit;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        h1,
+        h2,
+        h3 {
+            line-height: 1.2;
+            overflow-wrap: anywhere;
+        }
+
+        h1 {
+            max-width: 1000px;
+            margin: 0;
+            font-size: clamp(3rem, 7vw, 6rem);
+            letter-spacing: -3px;
+        }
+
+        h1 span {
+            display: block;
+            color: var(--cyan);
+        }
+
+        h2 {
+            margin: 0 0 18px;
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            letter-spacing: -1px;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+        }
+
+        /* Keyboard accessibility */
+        .skip-link {
+            position: fixed;
+            left: 20px;
+            top: -100px;
+            z-index: 1000;
+            padding: 10px 16px;
+            background: white;
+            color: var(--text);
+        }
+
+        .skip-link:focus {
+            top: 20px;
+        }
+
+        a:focus-visible,
+        button:focus-visible,
+        summary:focus-visible {
+            outline: 3px solid var(--cyan);
+            outline-offset: 4px;
+        }
+
+        /* Header and navigation */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            min-height: 72px;
+            padding: 10px 5%;
+            background: rgba(6, 23, 47, 0.96);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        .logo {
+            text-decoration: none;
+            font-size: 1.25rem;
+            font-weight: bold;
+            letter-spacing: 3px;
+        }
+
+        .logo span {
+            color: var(--cyan);
+        }
+
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 8px 18px;
+        }
+
+        nav a {
+            color: #cfe5fa;
+            text-decoration: none;
+            font-size: 0.86rem;
+            padding: 4px 0;
+        }
+
+        nav a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        /* Section layout */
+        section {
+            padding: 90px 7%;
+        }
+
+        .dark-section {
+            background: var(--dark-blue);
+            color: white;
+        }
+
+        .light-section {
+            background: var(--light-blue);
+        }
+
+        .section-heading {
+            max-width: 850px;
+            margin-bottom: 42px;
+        }
+
+        .section-heading > p {
+            color: var(--grey);
+        }
+
+        .eyebrow,
+        .section-heading > .eyebrow {
+            margin: 0 0 8px;
+            color: #075fbd;
+            font-size: 0.78rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .dark-section .section-heading > p {
+            color: #c7dbed;
+        }
+
+        .dark-section .eyebrow,
+        .hero .eyebrow {
+            color: var(--cyan);
+        }
+
+        /* Homepage */
+        .hero {
+            min-height: calc(100vh - 72px);
+            display: grid;
+            align-items: center;
+            background:
+                radial-gradient(
+                    circle at 80% 35%,
+                    rgba(22, 119, 255, 0.32),
+                    transparent 28%
+                ),
+                linear-gradient(140deg, #041126, #0a2b59);
+            color: white;
+        }
+
+        .hero p {
+            max-width: 750px;
+            color: #c8dcf0;
+            font-size: 1.15rem;
+        }
+
+        .hero .eyebrow {
+            font-size: 0.78rem;
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 12px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+        }
+
+        .primary-button {
+            background: #075fbd;
+            color: white;
+        }
+
+        .primary-button:hover {
+            background: #064f9e;
+        }
+
+        .secondary-button {
+            border: 1px solid #7295bb;
+            color: white;
+        }
+
+        /* 3D model */
+        .rover-viewer {
+            display: block;
+            width: 100%;
+            height: 500px;
+            background: var(--light-blue);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+        }
+
+        .model-caption {
+            color: var(--grey);
+            font-size: 0.9rem;
+        }
+
+        /* Columns and cards */
+        .two-columns {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .three-columns {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .two-columns > *,
+        .three-columns > *,
+        .ipo-grid > *,
+        .requirements-grid > *,
+        .future-grid > * {
+            min-width: 0;
+            overflow-wrap: anywhere;
+        }
+
+        .card {
+            padding: 28px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            box-shadow: 0 15px 40px rgba(26, 67, 110, 0.08);
+        }
+
+        .card p {
+            color: var(--grey);
+        }
+
+        .card li {
+            margin-bottom: 10px;
+        }
+
+        .blue-card {
+            background: linear-gradient(145deg, #0a3972, #0966d8);
+            border: none;
+            color: white;
+        }
+
+        .blue-card p {
+            color: #d8eaff;
+        }
+
+        .card-label {
+            color: #075fbd;
+            font-size: 0.75rem;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .blue-card .card-label {
+            color: #a7e7ff;
+        }
+
+        /* Purpose photograph */
+        .purpose-photo {
+            margin: 0 0 24px;
+        }
+
+        .purpose-photo img {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+        }
+
+        .purpose-photo figcaption {
+            margin-top: 8px;
+            color: #d8eaff;
+            font-size: 0.8rem;
+        }
+
+        /* Beneficiaries */
+        .benefit-card {
+            border-top: 4px solid var(--blue);
+        }
+
+        .benefit-number {
+            color: var(--grey);
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        /* Expandable content */
+        details {
+            padding: 14px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        summary {
+            padding: 8px 0;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        summary:hover {
+            color: #075fbd;
+        }
+
+        .dark-section summary:hover {
+            color: var(--cyan);
+        }
+
+        details p {
+            font-size: 0.95rem;
+        }
+
+        /* Timeline */
+        .timeline-entry {
+            display: grid;
+            grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+            gap: 24px;
+            align-items: start;
+            margin-top: 20px;
+        }
+
+        .timeline-photo {
+            margin: 0;
+            min-width: 0;
+        }
+
+        .timeline-photo img {
+            display: block;
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            object-fit: contain;
+            background: var(--light-blue);
+            border-radius: 12px;
+        }
+
+        .timeline-photo figcaption {
+            margin-top: 8px;
+            color: var(--grey);
+            font-size: 0.8rem;
+            overflow-wrap: anywhere;
+        }
+
+        .timeline-text {
+            min-width: 0;
+            overflow-wrap: anywhere;
+        }
+
+        .timeline-text p:first-child {
+            margin-top: 0;
+        }
+
+        .analysis-box {
+            margin-top: 18px;
+            padding: 20px;
+            background: white;
+            border-left: 5px solid var(--blue);
+            border-radius: 8px;
+            color: var(--grey);
+        }
+
+        .analysis-box h3 {
+            color: var(--text);
+        }
+
+        /* Inputs, processes and outputs */
+        .ipo-grid,
+        .requirements-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 25px;
+        }
+
+        .ipo-card {
+            padding: 22px;
+            background: rgba(18, 57, 100, 0.72);
+            border: 1px solid #3b638e;
+            border-radius: 14px;
+        }
+
+        .ipo-card p {
+            color: #bdd2e7;
+            font-size: 0.92rem;
+        }
+
+        .feedback-example {
+            margin-top: 25px;
+            padding: 22px;
+            border: 1px solid var(--cyan);
+            border-radius: 14px;
+            color: #d7e9fa;
+        }
+
+        /* System requirements */
+        .requirement-card {
+            padding: 22px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+        }
+
+        .requirement-card small {
+            color: #075fbd;
+            font-weight: bold;
+        }
+
+        .requirement-card p {
+            color: var(--grey);
+            font-size: 0.9rem;
+        }
+
+        /* Advantages and disadvantages */
+        .impact-column {
+            padding: 32px;
+            background: white;
+            border-radius: 18px;
+        }
+
+        .advantage {
+            border-top: 5px solid var(--blue);
+        }
+
+        .disadvantage {
+            border-top: 5px solid var(--red);
+        }
+
+        .impact-column ul {
+            padding-left: 20px;
+        }
+
+        .impact-column li {
+            margin-bottom: 15px;
+            color: var(--grey);
+        }
+
+        blockquote {
+            margin: 22px 0 0;
+            padding: 25px 30px;
+            background: var(--dark-blue);
+            border-left: 5px solid var(--cyan);
+            border-radius: 12px;
+            color: #d8eafa;
+            font-size: 1.06rem;
+        }
+
+        /* Social, legal and ethical icons */
+        .category-icon {
+            display: grid;
+            place-items: center;
+            width: 46px;
+            height: 46px;
+            background: #075fbd;
+            border-radius: 50%;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Future significance */
+        .future-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+            gap: 60px;
+        }
+
+        .future-item {
+            display: grid;
+            grid-template-columns: 45px minmax(0, 1fr);
+            gap: 15px;
+            padding: 18px 0;
+            border-bottom: 1px solid #34587e;
+        }
+
+        .future-item strong {
+            color: var(--cyan);
+        }
+
+        .future-item p {
+            margin: 0;
+            color: #c7dbed;
+        }
+
+        /* APA bibliography */
+        .bibliography {
+            padding: 30px;
+            background: white;
+            border-radius: 18px;
+        }
+
+        .reference {
+            margin: 0 0 18px;
+            padding-left: 2em;
+            text-indent: -2em;
+            line-height: 2;
+            color: var(--text);
+            overflow-wrap: anywhere;
+        }
+
+        .reference a {
+            color: #075fbd;
+        }
+
+        /* Footer */
+        footer {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 35px 7%;
+            background: var(--dark-blue);
+            color: white;
+        }
+
+        footer p {
+            margin: 3px 0;
+            color: #a9c3dd;
+            font-size: 0.88rem;
+        }
+
+        footer a {
+            color: var(--cyan);
+        }
+
+        /* Tablet layout */
+        @media (max-width: 950px) {
+            header {
+                position: relative;
+                display: block;
+            }
+
+            nav {
+                justify-content: flex-start;
+                margin-top: 12px;
+            }
+
+            .three-columns,
+            .ipo-grid,
+            .requirements-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        /* Mobile layout */
+        @media (max-width: 700px) {
+            section {
+                padding: 65px 22px;
+            }
+
+            h1 {
+                font-size: 2.6rem;
+                letter-spacing: -1px;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            .two-columns,
+            .three-columns,
+            .ipo-grid,
+            .requirements-grid,
+            .future-grid,
+            .timeline-entry {
+                grid-template-columns: 1fr;
+            }
+
+            .future-grid {
+                gap: 24px;
+            }
+
+            .rover-viewer {
+                height: 350px;
+            }
+
+            .card,
+            .impact-column {
+                padding: 22px;
+            }
+
+            .bibliography {
+                padding: 20px;
+            }
+
+            footer {
+                display: block;
+            }
+
+            footer > div + div {
+                margin-top: 16px;
+            }
+        }
+
+        /* Reduced motion preference */
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
+            .button {
+                transition: none;
+            }
+
+            .button:hover {
+                transform: none;
+            }
+        }
+
+        /* Circular planning mind map */
+.cadre-map-scroll {
+    overflow-x: auto;
+    margin-bottom: 40px;
+    padding: 12px 0;
+}
+
+.cadre-map {
+    position: relative;
+    width: 900px;
+    height: 700px;
+    margin: 0 auto;
+}
+
+.cadre-map-lines {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.cadre-map-lines line {
+    stroke: var(--blue);
+    stroke-width: 3;
+}
+
+.cadre-map-circle {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 180px;
+    height: 180px;
+    padding: 20px;
+    border: 2px solid var(--blue);
+    border-radius: 50%;
+    background: white;
+    color: var(--text);
+    text-align: center;
+    font-size: 15px;
+    font-weight: bold;
+    line-height: 1.4;
+    transform: translate(-50%, -50%);
+}
+
+.cadre-map-core {
+    left: 450px;
+    top: 350px;
+    width: 200px;
+    height: 200px;
+    background: var(--navy);
+    color: white;
+    font-size: 21px;
+    border: 4px solid var(--cyan);
+}
+
+.cadre-map-one {
+    left: 450px;
+    top: 110px;
+}
+
+.cadre-map-two {
+    left: 730px;
+    top: 230px;
+}
+
+.cadre-map-three {
+    left: 730px;
+    top: 470px;
+}
+
+.cadre-map-four {
+    left: 450px;
+    top: 590px;
+}
+
+.cadre-map-five {
+    left: 170px;
+    top: 470px;
+}
+
+.cadre-map-six {
+    left: 170px;
+    top: 230px;
+}
+    </style>
+
+    <!-- Load the interactive 3D viewer -->
+    <script
+        type="module"
+        src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
+    </script>
+</head>
+
+<body>
+
+    <a class="skip-link" href="#main">Skip to main content</a>
+
+    <!-- Header and navigation -->
+    <header id="top">
+        <a class="logo" href="#home">CAD<span>RE</span></a>
+
+        <nav aria-label="Main navigation">
+            <a href="#rover-model">3D Rover</a>
+            <a href="#purpose">Purpose</a>
+            <a href="#beneficiaries">Beneficiaries</a>
+            <a href="#timeline">Timeline</a>
+            <a href="#system">System</a>
+            <a href="#requirements">Requirements</a>
+            <a href="#impact">Impact</a>
+            <a href="#responsibility">Responsibility</a>
+            <a href="#future">Future</a>
+            <a href="#planning">Planning</a>
+            <a href="#sources">Bibliography</a>
+        </nav>
+    </header>
+
+    <main id="main" tabindex="-1">
+
+        <!-- Homepage -->
+        <section class="hero" id="home">
+            <div>
+                <p class="eyebrow">
+                    Year 10 Computing Technology · Mechatronics
+                </p>
+
+                <h1>
+                    Three rovers.
+                    <span>One shared mission.</span>
+                </h1>
+
+                <p>
+                    Explore CADRE: NASA’s Cooperative Autonomous
+                    Distributed Robotic Exploration system, designed
+                    to test how three small rovers can work together
+                    with limited direction from Earth.
+                </p>
+
+                <div class="hero-buttons">
+                    <a class="button primary-button" href="#rover-model">
+                        Explore the 3D rover
+                    </a>
+
+                    <a class="button secondary-button" href="#system">
+                        Discover how it works
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive CADRE model -->
+        <section id="rover-model">
+            <div class="section-heading">
+                <p class="eyebrow">Explore CADRE</p>
+                <h2>Take a closer look</h2>
+                <p>
+                    Drag to rotate. Scroll or pinch to zoom.
+                    Select the model and use the arrow keys
+                    to rotate it with a keyboard.
+                </p>
+            </div>
+
+            <model-viewer
+                class="rover-viewer"
+                src="main_body.glb"
+                alt="A simplified CADRE rover with solar panels,
+                     four wheels and antennas."
+                camera-controls
+                touch-action="pan-y"
+                shadow-intensity="1">
+            </model-viewer>
+
+            <p class="model-caption">
+                A simplified prototype modelled in Blender.
+                Colours and details are approximate.
+            </p>
+        </section>
+
+        <!-- Purpose and Personal Interest -->
+        <section id="purpose">
+            <div class="section-heading">
+                <p class="eyebrow">About CADRE</p>
+                <h2>Purpose and Personal Interest</h2>
+            </div>
+
+            <div class="two-columns">
+
+                <!-- Purpose -->
+                <article class="card blue-card">
+                    <span class="card-label">Purpose</span>
+                    <h3>What is the purpose of CADRE rovers?</h3>
+
+                    <figure class="purpose-photo">
+                        <img
+                            src="cadre-completed.jpg"
+                            alt="A completed CADRE rover with its
+                                 solar panels open."
+                            loading="lazy">
+
+                        <figcaption>
+                            CADRE rover with deployed solar panels.
+                            Credit:
+                            <a href="https://www.jpl.nasa.gov/images/pia26169-completed-cadre-rover-in-the-clean-room/">
+                                NASA/JPL-Caltech
+                            </a>
+                        </figcaption>
+                    </figure>
+
+                    <p>
+                        <strong>
+                            NASA’s CADRE (Cooperative Autonomous
+                            Distributed Robotic Exploration)
+                        </strong>
+                        system aims to demonstrate that three rovers
+                        can explore the Moon as an autonomous team.
+                        Its purpose is to test whether robots can
+                        coordinate their decisions and collect scientific
+                        measurements with limited human supervision,
+                        establishing technology for future space exploration.
+                    </p>
+
+                    <ul>
+                        <li>
+                            <p>
+                                <strong>Demonstrate independent teamwork.</strong>
+                                Operators on Earth will provide an overall
+                                objective, while the rovers will divide tasks,
+                                share information and select safe routes.
+                                This transfers responsibility for routine
+                                coordination to the robots, testing whether
+                                a team can pursue a shared goal without
+                                humans directing every movement.
+                            </p>
+                        </li>
+
+                        <li>
+                            <p>
+                                <strong>
+                                    Demonstrate scientific capabilities
+                                    that require multiple robots.
+                                </strong>
+                                The rovers will map the lunar surface and
+                                use ground-penetrating radar to investigate
+                                beneath it. Taking coordinated measurements
+                                from different locations simultaneously
+                                enables them to gather data that a single
+                                rover could not collect alone. Cooperation
+                                therefore expands the kinds of scientific
+                                investigations robots can perform.
+                            </p>
+                        </li>
+
+                        <li>
+                            <p>
+                                <strong>
+                                    Advance A-PUFFER’s technology into
+                                    lunar exploration.
+                                </strong>
+                                CADRE builds on
+                                <strong>
+                                    A-PUFFER (Autonomous Pop-Up Flat
+                                    Folding Explorer Robot)
+                                </strong>,
+                                which developed an early version of its
+                                cooperative autonomy software. CADRE’s
+                                purpose includes assessing whether
+                                Earth-based testing accurately predicts
+                                performance on the Moon—providing evidence
+                                that the technology can operate under
+                                actual mission conditions.
+                            </p>
+                        </li>
+
+                        <li>
+                            <p>
+                                One planned autonomy experiment requires the rovers to independently select routes through a designated area of approximately 400m^2, while their stereo-camera observations contribute to a three dimensional topographic map. In another experiment, their multistatic ground-penetrating radars are intended to investigate structures as deep as approximately beneath the lunar surface.These experiments test not only whether the robots can move autonomously, but whether cooperation between several autonomous machines can produce useful information that would be difficult for a single rover to obtain. 
+                            </p>
+                        </li>
+                    </ul>
+                </article>
+
+                <!-- Personal interest -->
+                <article class="card">
+                    <span class="card-label">Personal Interest</span>
+                    <h3>Why did I choose CADRE?</h3>
+
+                    <p>
+                        I selected CADRE because I am particularly
+                        interested in how several robots can operate
+                        as one coordinated system rather than as
+                        independently controlled machines.
+                    </p>
+
+                    <p>
+                        A conventional rover receives instructions
+                        from human operators and makes some local
+                        navigation decisions. CADRE advances this idea
+                        by requiring three rovers to communicate, share
+                        data, allocate tasks and coordinate their
+                        movements while managing limited energy and
+                        operating time. This makes the system an
+                        interesting intersection of artificial
+                        intelligence, robotics, communications and
+                        mechanical engineering.
+                    </p>
+
+                    <p>
+                        I am also interested in the use of
+                        ground-penetrating radar because it demonstrates
+                        how autonomous movement can produce meaningful
+                        scientific information. Instead of merely
+                        travelling across the Moon, the rovers must
+                        position themselves carefully as a team so
+                        their combined measurements can construct
+                        a subsurface map.
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <!-- Beneficiaries -->
+        <section class="light-section" id="beneficiaries">
+            <div class="section-heading">
+                <p class="eyebrow">Beneficiary groups</p>
+                <h2>Who benefits from CADRE?</h2>
+            </div>
+
+            <div class="three-columns">
+
+                <article class="card benefit-card">
+                    <span class="benefit-number">01 · Engineering</span>
+                    <h3>NASA/JPL engineers</h3>
+
+                    <p>
+                        CADRE is intended to provide real-world evidence
+                        about the reliability, limitations and failure
+                        behaviour of multi-robot autonomy.
+                    </p>
+
+                    <p>
+                        Instead of relying entirely on computer
+                        simulations, engineers would be able to compare
+                        predicted performance with the behaviour of
+                        actual rovers in a lunar environment. This could
+                        reduce technical uncertainty and inform the
+                        design of future planetary robot teams.
+                    </p>
+                </article>
+
+                <article class="card benefit-card">
+                    <span class="benefit-number">
+                        02 · Scientific research
+                    </span>
+                    <h3>Planetary scientists and researchers</h3>
+
+                    <p>
+                        CADRE could benefit planetary scientists by demonstrating a new way of collecting scientific data rather than simply carrying another instrument to the Moon. Multiple autonomous rovers can spread across different locations and take simultaneous measurements that a single rover could not obtain alone. In CADRE, coordinated ground-penetrating radar measurements from the three rovers can be combined to construct a 3D representation of the lunar subsurface. If this approach is successful, future scientists could design investigations around distributed measurements, using several mobile instruments to examine different parts of an environment at the same time. This could be particularly valuable for studying large, uneven or difficult-to-access planetary environments.
+                    </p>
+                </article>
+
+                <article class="card benefit-card">
+                    <span class="benefit-number">
+                        03 · Future astronaut safety
+                    </span>
+                    <h3>Astronauts on future missions</h3>
+
+                    <p>
+                        Future robotic teams could scout an area
+                        before astronauts arrive by:
+                    </p>
+
+                    <ul>
+                        <li>Mapping terrain.</li>
+                        <li>Identifying obstacles.</li>
+                        <li>Investigating potentially unsafe areas.</li>
+                        <li>Determining appropriate travel routes.</li>
+                        <li>
+                            Locating scientifically or operationally
+                            valuable sites.
+                        </li>
+                    </ul>
+
+                    <p>
+                        This could reduce astronauts’ exposure to
+                        unstable surfaces, extreme temperatures,
+                        radiation and other hazards. NASA identifies
+                        astronaut support as a possible application
+                        of future multirobot missions.
+                    </p>
+                </article>
+
+                <article class="card benefit-card">
+                    <span class="benefit-number">
+                        04 · Potential future application
+                    </span>
+                    <h3>Environmental researchers</h3>
+
+                    <p>
+                        Distributed robots could collect simultaneous
+                        environmental measurements across large or
+                        inaccessible regions. Possible applications
+                        include glaciers, deserts, caves, forests
+                        and disaster-affected ecosystems.
+                    </p>
+
+                    <p>
+                        Simultaneous measurement is particularly
+                        valuable when environmental conditions change
+                        quickly, because data gathered at different
+                        locations can be compared at the same moment.
+                    </p>
+
+                    <p>
+                        These are potential applications of cooperative
+                        robotics, rather than activities performed by
+                        CADRE’s lunar rovers.
+                    </p>
+                </article>
+
+                <article class="card benefit-card">
+                    <span class="benefit-number">
+                        05 · Education and public knowledge
+                    </span>
+                    <h3>The wider public</h3>
+
+                    <p>
+                        CADRE provides an educational example of
+                        computing concepts such as:
+                    </p>
+
+                    <ul>
+                        <li>Distributed systems.</li>
+                        <li>Autonomous decision-making.</li>
+                        <li>Networking and redundancy.</li>
+                        <li>Feedback and robotics.</li>
+                        <li>Systems engineering.</li>
+                    </ul>
+
+                    <p>
+                        NASA missions may also generate scientific
+                        knowledge and technological innovation funded
+                        for public benefit.
+                    </p>
+                </article>
+
+                <article class="card benefit-card">
+                    <span class="benefit-number">
+                        06.Software + Hardware Designs
+                    </span>
+                    <h3>Robotics researchers and developers</h3>
+
+                    <p>
+                       CADRE can also benefit researchers developing autonomous and multi-robot systems. The project provides a real mission environment in which technologies such as cooperative planning, navigation, communication, resource management and fault handling can be tested together. JPL also states that it plans to make CADRE's software stack and hardware designs available within the United States under a free licence to help encourage further innovation. This means CADRE's value is not limited to the three flight rovers: knowledge and technology developed by the project could contribute to later autonomous robotic systems.
+                    </p>
+
+            </div>
+        </section>
+
+        <!-- Development timeline -->
+        <section id="timeline">
+            <div class="section-heading">
+                <p class="eyebrow">Development timeline</p>
+                <h2>From remote control to autonomous teams</h2>
+                <p>
+                    Select each milestone to explore how planetary
+                    rovers developed and where CADRE fits into
+                    this evolution.
+                </p>
+            </div>
+
+            <div class="card">
+
+                <details open>
+  <summary>1958 — Servo Technology Develops</summary>
+
+  <div class="timeline-entry">
+    <figure class="timeline-photo">
+      <img
+        loading="lazy"
+        src="Servo_technology.jpg"
+        alt="Early Yaskawa Minertia motor representing the development of servo technology"
+      >
+      <figcaption>
+        Early servo technology — Yaskawa Minertia motor
+      </figcaption>
+    </figure>
+
+    <div class="timeline-text">
+      <p>
+        Yaskawa developed the <strong>Minertia motor</strong>, an important
+        predecessor of modern servo motors. Its high response rate enabled much
+        more precise control of mechanical movement. This represents an early
+        stage in mechatronic development, where electrical control increasingly
+        became integrated with mechanical machinery.
+      </p>
+    </div>
+  </div>
+</details>
+
+
+<details open>
+  <summary>1969 — The Concept of Mechatronics Emerges</summary>
+
+  <div class="timeline-entry">
+    <figure class="timeline-photo">
+      <img
+        loading="lazy"
+        src="concept_of_mechantronics.jpg"
+        alt="Tetsuro Mori, the Yaskawa engineer associated with the term mechatronics"
+      >
+      <figcaption>
+        Tetsuro Mori — the engineer who coined the term “mechatronics”
+      </figcaption>
+    </figure>
+
+    <div class="timeline-text">
+      <p>
+        Yaskawa engineer <strong>Tetsuro Mori</strong> coined the term
+        <strong>“mechatronics”</strong> by combining <em>mechanism</em> and
+        <em>electronics</em>. The trademark application was made in 1969 and
+        registered in 1972. The concept described the integration of mechanical
+        devices such as motors and machines with electronic control to achieve
+        greater functionality.
+      </p>
+    </div>
+  </div>
+</details>
+
+<details open>
+                    <summary>1970 · Lunokhod 1</summary>
+
+                    <div class="timeline-entry">
+                        <figure class="timeline-photo">
+                            <img
+                                src="lunokhod_1.JPG"
+                                alt="A display model of Lunokhod 1 with
+                                     eight wheels and an open solar-panel lid."
+                                loading="lazy">
+                            <figcaption>
+                                A display model of Lunokhod 1.
+                            </figcaption>
+                        </figure>
+
+                        <div class="timeline-text">
+                            <p>
+                                The Soviet Lunokhod 1 became the first
+                                successful remote-controlled rover on
+                                another world. It demonstrated that a
+                                wheeled robot could survive and travel
+                                across the Moon, although human operators
+                                controlled its movements from Earth.
+                            </p>
+                        </div>
+                    </div>
+                </details>
+
+                <details open>
+  <summary>1977 — Programmable Industrial Robotics</summary>
+
+  <div class="timeline-entry">
+    <figure class="timeline-photo">
+      <img
+        loading="lazy"
+        src="programmable_industrial_robots.jpg"
+        alt="Yaskawa MOTOMAN-L10 industrial robot introduced in 1977"
+      >
+      <figcaption>
+        MOTOMAN-L10 — programmable industrial robotics
+      </figcaption>
+    </figure>
+
+    <div class="timeline-text">
+      <p>
+        Yaskawa introduced the <strong>MOTOMAN-L10</strong>, Japan's first
+        all-electric industrial robot, in <strong>1977</strong>. It integrated
+        electric motors, mechanical joints and programmable control to perform
+        industrial tasks such as arc welding. This demonstrates an important
+        shift: the behaviour of a mechanical machine could increasingly be
+        controlled through <strong>electronic programming</strong>, rather than
+        being determined solely by its physical design.
+      </p>
+    </div>
+  </div>
+</details>
+
+                <details>
+                    <summary>1997 · Sojourner</summary>
+
+                    <div class="timeline-entry">
+                        <figure class="timeline-photo">
+                            <img
+                                src="sojourner.jpg"
+                                alt="Sojourner on rocky Martian ground."
+                                loading="lazy">
+                            <figcaption>
+                                Sojourner on the surface of Mars.
+                            </figcaption>
+                        </figure>
+
+                        <div class="timeline-text">
+                            <p>
+                                Sojourner became the first rover to
+                                operate successfully on Mars. It used
+                                six wheels, rocker-bogie suspension
+                                and limited autonomous obstacle avoidance.
+                                It established the basic mobility design
+                                later inherited by NASA’s larger Mars rovers.
+                            </p>
+                        </div>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>2004 · Spirit and Opportunity</summary>
+
+                    <div class="timeline-entry">
+                        <figure class="timeline-photo">
+                            <img
+                                src="spirit%20and%20opportunity.jpg"
+                                alt="Illustrations of the Spirit and
+                                     Opportunity rover design."
+                                loading="lazy">
+                            <figcaption>
+                                Illustration of the Spirit and
+                                Opportunity rovers.
+                            </figcaption>
+                        </figure>
+
+                        <div class="timeline-text">
+                            <p>
+                                These twin Mars rovers were larger
+                                than Sojourner, travelled farther and
+                                carried more advanced scientific
+                                equipment. They used improved autonomous
+                                navigation because communication delays
+                                prevented continuous control from Earth.
+                            </p>
+                        </div>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>2012–2013 · Curiosity</summary>
+
+                    <div class="timeline-entry">
+                        <figure class="timeline-photo">
+                            <img
+                                src="curiosity.jpg"
+                                alt="A digital model of Curiosity showing
+                                     its camera mast, robotic arm and wheels."
+                                loading="lazy">
+                            <figcaption>
+                                Digital model of the Curiosity rover.
+                            </figcaption>
+                        </figure>
+
+                        <div class="timeline-text">
+                            <p>
+                                Curiosity introduced a larger, more
+                                powerful rover platform. In 2013, it
+                                began using autonomous navigation to
+                                analyse stereo images, recognise
+                                hazardous terrain and select a safe
+                                route beyond areas already examined
+                                by operators.
+                            </p>
+                        </div>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>2021 · Perseverance</summary>
+
+                    <div class="timeline-entry">
+                        <figure class="timeline-photo">
+                            <img
+                                src="perseverance.jpg"
+                                alt="An artist’s concept of Perseverance
+                                     on the Martian surface."
+                                loading="lazy">
+                            <figcaption>
+                                Artist’s concept of Perseverance on Mars.
+                            </figcaption>
+                        </figure>
+
+                        <div class="timeline-text">
+                            <p>
+                                Perseverance’s improved AutoNav system
+                                could process terrain images and make
+                                navigation decisions while moving,
+                                described as “thinking while driving.”
+                                This enabled faster and more independent
+                                movement than earlier Mars rovers.
+                            </p>
+                        </div>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>Before CADRE · A-PUFFER</summary>
+
+                    <div class="timeline-entry">
+                        <figure class="timeline-photo">
+                            <img
+                                src="A-PUFFER.jpg"
+                                alt="A small folding robot with two
+                                     large wheels."
+                                loading="lazy">
+                            <figcaption>
+                                A folding robot design from the
+                                PUFFER family.
+                            </figcaption>
+                        </figure>
+
+                        <div class="timeline-text">
+                            <p>
+                                JPL developed A-PUFFER, or Autonomous
+                                Pop-Up Flat Folding Explorer Robot.
+                                A-PUFFER helped develop an earlier
+                                version of the multi-agent autonomous
+                                software used by CADRE.
+                            </p>
+                        </div>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>2023 · CADRE team testing</summary>
+
+                    <div class="timeline-entry">
+                        <figure class="timeline-photo">
+                            <img
+                                src="cadre-drive.jpg"
+                                alt="Three CADRE rovers being prepared
+                                     for an autonomous driving test."
+                                loading="lazy">
+                            <figcaption>
+                                CADRE autonomous driving test,
+                                December 2023. Credit:
+                                <a href="https://www.jpl.nasa.gov/images/pia26164-nasas-cadre-rovers-take-first-autonomous-drive/">
+                                    NASA/JPL-Caltech
+                                </a>
+                            </figcaption>
+                        </figure>
+
+                        <div class="timeline-text">
+                            <p>
+                                Full-scale CADRE development rovers were
+                                tested together in JPL’s Mars Yard.
+                                Testing demonstrated that several robots
+                                could navigate and operate as a
+                                coordinated team.
+                            </p>
+
+                            <p>
+                                The photograph shows a separate clean-room
+                                driving test in December 2023, when
+                                engineers tested the flight rovers’
+                                ability to drive together autonomously.
+                            </p>
+                        </div>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>
+                        February 2024 · Flight hardware completed
+                    </summary>
+
+                    <div class="timeline-entry">
+                        <figure class="timeline-photo">
+                            <img
+                                src="cadre-completed.jpg"
+                                alt="A completed CADRE rover with
+                                     unfolded solar panels."
+                                loading="lazy">
+                            <figcaption>
+                                Completed rover photographed in
+                                January 2024. Credit:
+                                <a href="https://www.jpl.nasa.gov/images/pia26169-completed-cadre-rover-in-the-clean-room/">
+                                    NASA/JPL-Caltech
+                                </a>
+                            </figcaption>
+                        </figure>
+
+                        <div class="timeline-text">
+                            <p>
+                                Construction and environmental testing
+                                of CADRE’s flight hardware were completed.
+                                CADRE advanced from experimental models
+                                to tested flight hardware. Testing included
+                                vibration, thermal-vacuum and electromagnetic
+                                compatibility testing.
+                            </p>
+                        </div>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>
+                        February 2025 · Delivery for integration
+                    </summary>
+
+                    <p>
+                        The three rovers, deployers and base station
+                        were shipped for integration with Intuitive
+                        Machines’ lander. This moved CADRE from
+                        laboratory development towards a lunar
+                        technology demonstration.
+                    </p>
+                </details>
+
+                <details>
+                    <summary>Planned lunar demonstration · CADRE</summary>
+
+                    <p>
+                        CADRE is designed to demonstrate cooperative
+                        robotic autonomy, surface mapping and distributed
+                        subsurface radar measurements on the Moon.
+                    </p>
+
+                    <p>
+                        Its three rovers will work towards a shared
+                        objective, testing whether a robotic team can
+                        coordinate its activities with limited direction
+                        from Earth.
+                    </p>
+                </details>
+
+                <details>
+                    <summary>Future · Larger cooperative robot teams</summary>
+
+                    <p>
+                        Larger multirobot planetary systems could be
+                        developed using CADRE’s results. Future robots
+                        may spread across wider areas, take simultaneous
+                        measurements and support astronauts while
+                        requiring fewer detailed instructions from Earth.
+                    </p>
+
+                    <p>
+                        Future evolution: CADRE's distributed approach demonstrates technologies that could contribute to future teams of robots working together in environments that are distant, hazardous or difficult for humans to access. Rather than relying on a single highly capable machine, future mechatronic systems may increasingly operate as interconnected teams that share information and coordinate tasks autonomously.
+                    </p>
+                </details>
+
+                <details>
+                    <summary>Overall evolution</summary>
+
+                    <p>
+                        Across this timeline, mechatronic systems evolved from
+                electrically controlled mechanical motion, to programmable
+                machines, to robots capable of sensing and responding to
+                their environments, and eventually to autonomous navigation.
+                    </p>
+
+                    <p>
+                        CADRE represents a further development in which autonomy is
+                distributed across multiple cooperating machines. Rather than
+                one robot independently integrating sensing, computation and
+                control, CADRE's rovers exchange information and coordinate
+                their actions towards shared objectives.
+                    </p>
+
+                    <p>
+                        The overall progression can therefore be summarised as
+                <strong>electrical control → programmable robotics →
+                environmental sensing → autonomous navigation →
+                cooperative distributed autonomy</strong>.
+                    </p>
+                </details>
+
+
+
+            <div class="analysis-box">
+                <strong>How has the technology evolved?</strong>
+                <p>
+                    These developments show a progression from remotely
+                    controlled machines to rovers that interpret sensor
+                    data and make local navigation decisions. CADRE
+                    extends this development to cooperative autonomy:
+                    several robots must share information, allocate
+                    tasks and coordinate their movements to achieve
+                    a common objective.
+                </p>
+            </div>
+        </section>
+
+        <!-- Inputs, processes and outputs -->
+        <section class="dark-section" id="system">
+            <div class="section-heading">
+                <p class="eyebrow">How CADRE works</p>
+                <h2>Inputs, Processes and Outputs</h2>
+            </div>
+
+            <!-- Inputs -->
+            <details open>
+                <summary>01 · Inputs</summary>
+
+                <div class="ipo-grid">
+
+                    <article class="ipo-card">
+                        <h3>High-level commands</h3>
+                        <p>
+                            Humans provide general objectives, such as
+                            exploring a defined region, rather than
+                            directly specifying every movement.
+                        </p>
+                    </article>
+
+                    <article class="ipo-card">
+                        <h3>Camera images</h3>
+                        <p>
+                            Cameras provide information used to recognise
+                            terrain, locate hazards and construct a
+                            three-dimensional surface model.
+                        </p>
+                    </article>
+
+                    <article class="ipo-card">
+                        <h3>Ground-penetrating radar returns</h3>
+                        <p>
+                            Radar transmits signals into the lunar surface
+                            and receives reflected signals from subsurface
+                            boundaries.
+                        </p>
+                    </article>
+
+                    <article class="ipo-card">
+                        <h3>Position and orientation data</h3>
+                        <p>
+                            Each rover requires an estimate of its
+                            location, direction and movement relative
+                            to the other rovers and the base station.
+                        </p>
+                    </article>
+
+                    <article class="ipo-card">
+                        <h3>Wheel and motor feedback</h3>
+                        <p>
+                            Information about wheel movement and motor
+                            condition helps determine whether commands
+                            were completed correctly.
+                        </p>
+                    </article>
+
+                    <article class="ipo-card">
+                        <h3>Power data</h3>
+                        <p>
+                            Battery charge and solar-energy information
+                            allow CADRE to determine whether enough power
+                            is available for driving, communication,
+                            computing and radar operation.
+                        </p>
+                    </article>
+
+                    <article class="ipo-card">
+                        <h3>Temperature data</h3>
+                        <p>
+                            Internal temperature readings allow the system
+                            to prevent electronic and mechanical components
+                            from operating outside safe thermal limits.
+                        </p>
+                    </article>
+
+                    <article class="ipo-card">
+                        <h3>Rover status and task progress</h3>
+                        <p>
+                            Each rover reports whether it is operating
+                            normally and whether its assigned task is
+                            pending, underway, completed or unsuccessful.
+                        </p>
+                    </article>
+
+                    <article class="ipo-card">
+                        <h3>Communication status</h3>
+                        <p>
+                            The system monitors whether each rover can
+                            communicate with other rovers and the base
+                            station. Lunar terrain and electromagnetic
+                            interference may disrupt connections.
+                        </p>
+                    </article>
+
+                    <article class="ipo-card">
+                        <h3>Shared maps and team data</h3>
+                        <p>
+                            Each rover receives relevant information
+                            gathered by other rovers, including explored
+                            locations, detected hazards and important
+                            scientific data.
+                        </p>
+                    </article>
+
+                   
+                </div>
+            </details>
+
+            <!-- Processes -->
+            <details>
+                <summary>02 · Processes</summary>
+
+                <div class="ipo-grid">
+
+                    <article class="ipo-card">
+                        <h3>Terrain perception</h3>
+                        <p>
+                            CADRE’s onboard software analyses camera
+                            images to identify obstacles, slopes and
+                            areas that may be safe or unsafe to cross.
+                        </p>
+                    </article>
+
+                    <article class="ipo-card">
+                        <h3>Localisation</h3>
+                        <p>
+                            Each rover processes visual and movement
+                            information to estimate its location and
+                            orientation. Accurate localisation is
+                            necessary because there is no ordinary
+                            GPS service on the Moon.
+                        </p>
+                    </article>
+
+                    <article class="ipo-card">
+                        <h3>Three-dimensional surface mapping</h3>
+                        <p>
+                            Images taken from different positions are
+                            matched and combined to reconstruct the shape
+                            of the lunar terrain. Local maps produced by
+                            individual rovers contribute to a shared team map.
+                        </p>
+                    </article>
+
+                    <article class="ipo-card">
+                        <h3>Autonomous route planning</h3>
+                        <p>
+                            The system compares possible paths and
+                            determines how each rover can safely reach
+                            its assigned destination while avoiding
+                            hazardous terrain.
+                        </p>
+                    </article>
+
+                    <article class="ipo-card">
+                        <h3>Team planning and task allocation</h3>
+                        <p>
+                            CADRE converts a broad human objective into
+                            smaller tasks and decides which rover should
+                            perform each one based on its location,
+                            condition, power and other constraints.
+                        </p>
+                    </article>
+
+                    <article class="ipo-card">
+                        <h3>Cooperative navigation</h3>
+                        <p>
+                            The rovers coordinate their routes and
+                            movements so they can explore efficiently
+                            without colliding or unnecessarily repeating
+                            the same work.
+                        </p>
+                    </article>
+
+                    <article class="ipo-card">
+                        <h3>Formation control</h3>
+                        <p>
+                            During the radar experiment, the rovers
+                            calculate and adjust their relative positions
+                            so that they can take coordinated measurements
+                            from different locations.
+                        </p>
+                    </article>
+
+                    <article class="ipo-card">
+                        <h3>Radar-data processing</h3>
+                        <p>
+                            The system records radar reflections together
+                            with the position of each rover. Measurements
+                            taken from different positions can later be
+                            combined to reconstruct subsurface structures.
+                        </p>
+                    </article>
+
+                    <article class="ipo-card">
+                        <h3>Power and thermal management</h3>
+                        <p>
+                            CADRE checks energy and temperature before
+                            scheduling activities. It may delay movement
+                            or scientific measurements if they would place
+                            a rover outside safe operating limits.
+                        </p>
+                    </article>
+
+                    <article class="ipo-card">
+                        <h3>Data selection and sharing</h3>
+                        <p>
+                            Because communication capacity is limited,
+                            the system prioritises essential information
+                            such as commands, status reports and important
+                            mapping data rather than transmitting
+                            everything immediately.
+                        </p>
+                    </article>
+
+                    <article class="ipo-card">
+                        <h3>Leader selection and fault recovery</h3>
+                        <p>
+                            One rover performs the main team-planning role.
+                            Essential information is preserved so another
+                            rover can assume this role if the original
+                            leader fails.
+                        </p>
+                    </article>
+
+                    <article class="ipo-card">
+                        <h3>Continuous feedback and replanning</h3>
+                        <p>
+                            CADRE compares the result of each action with
+                            the planned result. If a route is blocked,
+                            a task fails or a rover’s condition changes,
+                            the system can update the team plan.
+                        </p>
+                    </article>
+                </div>
+            </details>
+
+            <!-- Outputs -->
+            <details>
+                <summary>03 · Outputs</summary>
+
+                <div class="ipo-grid">
+
+                    <article class="ipo-card">
+                        <h3>Rover movement</h3>
+                        <p>
+                            Electrical signals activate the wheel motors,
+                            causing each rover to drive, steer, stop
+                            or alter its route.
+                        </p>
+                    </article>
+
+                    <article class="ipo-card">
+                        <h3>Coordinated formation</h3>
+                        <p>
+                            The rovers move into specific relative
+                            positions required for distributed
+                            ground-penetrating radar measurements.
+                        </p>
+                    </article>
+
+                    <article class="ipo-card">
+                        <h3>Three-dimensional surface map</h3>
+                        <p>
+                            Camera information from the rovers is combined
+                            to represent the shape of the explored
+                            lunar terrain.
+                        </p>
+                    </article>
+
+                    <article class="ipo-card">
+                        <h3>Subsurface radar data and map</h3>
+                        <p>
+                            Coordinated radar measurements provide
+                            information that can be used to construct
+                            a three-dimensional representation of
+                            structures beneath the lunar surface.
+                        </p>
+                    </article>
+
+                    <article class="ipo-card">
+                        <h3>Shared team map</h3>
+                        <p>
+                            Terrain information gathered by individual
+                            rovers is combined into a common map used
+                            by the autonomous planner.
+                        </p>
+                    </article>
+
+                    <article class="ipo-card">
+                        <h3>Task assignments and movement commands</h3>
+                        <p>
+                            The cooperative planner produces instructions
+                            telling each rover what task to complete and
+                            where to move. These are internal outputs
+                            that become inputs for the individual
+                            rover controllers.
+                        </p>
+                    </article>
+
+                    <article class="ipo-card">
+                        <h3>Status and fault reports</h3>
+                        <p>
+                            CADRE produces reports describing rover
+                            position, task completion, power, temperature,
+                            communication availability and detected problems.
+                        </p>
+                    </article>
+
+                    <article class="ipo-card">
+                        <h3>Scientific data sent to Earth</h3>
+                        <p>
+                            Selected surface images and ground-penetrating
+                            radar measurements are transmitted through the
+                            base station and lander for analysis by scientists.
+                        </p>
+                    </article>
+
+                    <article class="ipo-card">
+                        <h3>Engineering performance data</h3>
+                        <p>
+                            NASA/JPL engineers receive information showing
+                            how successfully the rovers navigated,
+                            cooperated, shared data and recovered from
+                            problems. This helps evaluate the technology
+                            demonstration.
+                        </p>
+                    </article>
+                </div>
+            </details>
+
+            <!-- Feedback -->
+            <div class="feedback-example">
+                <strong>How the feedback loop works</strong>
+                <p>
+                    For example, a rover’s cameras detect a rock
+                    <strong>(input)</strong>. Navigation software analyses
+                    the terrain and calculates a safer route
+                    <strong>(process)</strong>. Motor commands steer the
+                    rover around the obstacle <strong>(output)</strong>.
+                    New images and position estimates show whether the
+                    movement succeeded <strong>(feedback)</strong>.
+                    The system can then correct its route if necessary.
+                </p>
+            </div>
+        </section>
+
+        <!-- System requirements -->
+        <section id="requirements">
+            <div class="section-heading">
+                <p class="eyebrow">System requirements</p>
+                <h2>What must CADRE do, and how well?</h2>
+            </div>
+
+            <details open>
+                <summary>Functional requirements</summary>
+
+                <p>
+                    Functional requirements describe what CADRE must
+                    do to achieve its mission.
+                </p>
+
+                <div class="requirements-grid">
+
+                    <article class="requirement-card">
+                        <small>FR01</small>
+                        <h3>Autonomous task planning and allocation</h3>
+                        <p>
+                            CADRE must convert an overall instruction from
+                            Earth, such as exploring a designated region,
+                            into tasks for individual rovers. An elected
+                            leader coordinates the plan while each rover
+                            carries out its assigned activities. This
+                            allows the team to pursue a shared objective
+                            without operators specifying every movement.
+                        </p>
+                    </article>
+
+                    <article class="requirement-card">
+                        <small>FR02</small>
+                        <h3>Navigation and hazard avoidance</h3>
+                        <p>
+                            Each rover must use sensor information to
+                            assess its surroundings, identify obstacles
+                            and determine a safe route. When new hazards
+                            appear, the system must update its plans.
+                            This feedback is essential because the actual
+                            terrain may differ from the information
+                            available when a route was first selected.
+                        </p>
+                    </article>
+
+                    <article class="requirement-card">
+                        <small>FR03</small>
+                        <h3>Surface mapping and information sharing</h3>
+                        <p>
+                            The rovers must collect camera observations
+                            to construct maps and share relevant information.
+                            This enables observations made by one rover
+                            to inform the team’s decisions, improving
+                            coordination and helping the robots avoid
+                            previously identified hazards.
+                        </p>
+                    </article>
+
+                    <article class="requirement-card">
+                        <small>FR04</small>
+                        <h3>Formation driving and coordinated measurements</h3>
+                        <p>
+                            CADRE must coordinate the rovers’ movements
+                            during experiments that require them to
+                            travel together. Their ground-penetrating
+                            radars must also take coordinated measurements
+                            from different positions. These functions
+                            allow the team to gather data that depends
+                            on several instruments operating together.
+                        </p>
+                    </article>
+
+                    <article class="requirement-card">
+                        <small>FR05</small>
+                        <h3>Communication and data return</h3>
+                        <p>
+                            The rovers must exchange information about
+                            their activities and condition through their
+                            radio network. They must also communicate
+                            with the lander’s base station, which provides
+                            the connection to Earth. Returning measurements
+                            and operational information allows engineers
+                            to evaluate whether the demonstration achieved
+                            its objectives.
+                        </p>
+                    </article>
+
+                    <article class="requirement-card">
+                        <small>FR06</small>
+                        <h3>Resource monitoring and fault response</h3>
+                        <p>
+                            CADRE must monitor battery energy, temperature
+                            and task progress, then adjust activities
+                            when necessary. It must also support the
+                            selection of a replacement leader if the
+                            existing leader becomes unavailable. These
+                            functions help the team respond to changing
+                            conditions instead of continuing with an
+                            unsuitable plan.
+                        </p>
+                    </article>
+                </div>
+            </details>
+
+            <details>
+                <summary>Non-functional requirements</summary>
+
+                <p>
+                    Non-functional requirements describe the quality
+                    of CADRE’s operation and the constraints it must satisfy.
+                </p>
+
+                <div class="requirements-grid">
+
+                    <article class="requirement-card">
+                        <small>NFR01</small>
+                        <h3>Reliability and fault tolerance</h3>
+                        <p>
+                            The system must perform consistently during
+                            its intended mission and manage some failures
+                            without unnecessarily losing the entire team’s
+                            capabilities. Leader replacement supports this
+                            quality. However, multiple rovers do not
+                            eliminate every risk, particularly failures
+                            affecting shared infrastructure such as
+                            the lander’s communication link.
+                        </p>
+                    </article>
+
+                    <article class="requirement-card">
+                        <small>NFR02</small>
+                        <h3>Environmental durability</h3>
+                        <p>
+                            The hardware must withstand launch vibration,
+                            vacuum and the temperatures encountered during
+                            the mission. NASA conducted vibration and
+                            thermal-vacuum testing to assess these
+                            capabilities. Durability matters because
+                            physical damage could prevent the system
+                            from performing its functions regardless
+                            of the quality of its software.
+                        </p>
+                    </article>
+
+                    <article class="requirement-card">
+                        <small>NFR03</small>
+                        <h3>Energy efficiency and thermal performance</h3>
+                        <p>
+                            CADRE must balance driving, sensing and
+                            computing against limited power and cooling
+                            capacity. Its planned wake–sleep cycles provide
+                            opportunities to recharge and release heat.
+                            This creates a design trade-off: increasing
+                            activity or computation may improve immediate
+                            productivity but also increase the risk of
+                            overheating or exhausting available energy.
+                        </p>
+                    </article>
+
+                    <article class="requirement-card">
+                        <small>NFR04</small>
+                        <h3>Positioning and measurement accuracy</h3>
+                        <p>
+                            Position estimates, camera observations and
+                            radar timing must be sufficiently accurate
+                            for coordinated exploration. Errors could
+                            affect formation driving or reduce the
+                            usefulness of combined measurements. Accuracy
+                            therefore influences both safe movement
+                            and the quality of the information produced.
+                        </p>
+                    </article>
+
+                    <article class="requirement-card">
+                        <small>NFR05</small>
+                        <h3>Compactness and low mass</h3>
+                        <p>
+                            Each rover must accommodate its instruments,
+                            computer, power supply and mobility equipment
+                            within a small, lightweight structure suitable
+                            for delivery to the Moon. This constrains
+                            component selection: additional equipment may
+                            increase capability while also increasing mass,
+                            power demand and integration difficulty.
+                        </p>
+                    </article>
+
+                    <article class="requirement-card">
+                        <small>NFR06</small>
+                        <h3>Electromagnetic compatibility</h3>
+                        <p>
+                            Electronic subsystems must work together
+                            without unacceptable interference, including
+                            interference with the lander. NASA tested
+                            this specifically. A component that operates
+                            correctly in isolation may still compromise
+                            the mission if its emissions disrupt another
+                            instrument or communication system.
+                        </p>
+                    </article>
+
+                    <article class="requirement-card">
+                        <small>NFR07</small>
+                        <h3>Suitability for the intended operating lifetime</h3>
+                        <p>
+                            CADRE is designed for approximately 14 Earth
+                            days of lunar daylight, with survival through
+                            lunar night not expected. Its reliability
+                            and durability should therefore be evaluated
+                            against that planned duration. Demonstrating
+                            successful short-term operation would not
+                            establish suitability for a mission lasting
+                            months or years.
+                        </p>
+                    </article>
+                </div>
+            </details>
+        </section>
+
+        <!-- Impacts -->
+        <section class="light-section" id="impact">
+            <div class="section-heading">
+                <p class="eyebrow">Impacts</p>
+                <h2>Advantages, disadvantages and employment</h2>
+                <p>
+                    CADRE tests whether robotic teams can carry out
+                    coordinated work with less human supervision.
+                    Its advantages include new scientific capabilities
+                    and potential safety benefits, while its limitations
+                    involve technical complexity, dependence on shared
+                    infrastructure and uncertain long-term costs.
+                    Because CADRE is a technology demonstration, many
+                    broader impacts remain potential outcomes for
+                    future missions.
+                </p>
+            </div>
+
+            <div class="two-columns">
+
+                <article class="impact-column advantage">
+                    <span class="card-label">Advantages</span>
+                    <h3>What benefits could CADRE provide?</h3>
+
+                    <ul>
+                        <li>
+                            <strong>Expanded scientific capability:</strong>
+                            By taking measurements from different locations
+                            simultaneously, CADRE can collect information
+                            that a single rover could not obtain alone.
+                            Its coordinated ground-penetrating radars are
+                            intended to investigate the Moon’s subsurface
+                            in three dimensions. This demonstrates how
+                            cooperation can increase the range of scientific
+                            investigations available to researchers, rather
+                            than simply increase the quantity of data collected.
+                        </li>
+
+                        <li>
+                            <strong>Reduced need for detailed human control:</strong>
+                            Operators provide an overall objective, while
+                            the system coordinates individual tasks and
+                            responds to changing conditions. This could
+                            reduce the workload involved in directing
+                            several robots separately, allowing mission
+                            teams to focus more on scientific priorities
+                            and interpreting results. However, this is
+                            a potential improvement in operational efficiency,
+                            not evidence of a confirmed reduction in staffing
+                            or total mission cost.
+                        </li>
+
+                        <li>
+                            <strong>Potentially safer exploration:</strong>
+                            NASA identifies hazardous-terrain exploration
+                            and astronaut support as possible applications
+                            of future cooperative rover teams. Robots
+                            could assess unfamiliar areas before people
+                            enter them, helping mission planners identify
+                            hazards while limiting human exposure.
+                            Equipment can undertake some exploratory risks
+                            that would be less acceptable for astronauts.
+                        </li>
+
+                        <li>
+                            <strong>
+                                Resilience when individual robots
+                                encounter problems:
+                            </strong>
+                            CADRE can replace an unavailable leader and
+                            revise the team’s plan. This reduces dependence
+                            on one permanently designated coordinating robot
+                            and could preserve useful activity when part
+                            of the system experiences difficulties.
+                            Nevertheless, losing a rover may still reduce
+                            coverage or limit experiments requiring
+                            multiple instruments.
+                        </li>
+
+                        <li>
+                            <strong>Greater access to research and participation:</strong>
+                            Sharing mission findings, methods and usable
+                            data could allow universities and students
+                            without their own lunar missions to benefit
+                            from the research. NASA’s broader Artemis
+                            principles support public release of scientific
+                            results. The extent of this benefit would depend
+                            on accessible documentation and the resources
+                            needed to analyse the information; publishing
+                            data alone does not ensure that everyone
+                            can use it effectively.
+                        </li>
+
+                        <li>
+                            <strong>Greater coverage and parallel operation:</strong>
+                            A team of autonomous rovers can spread across an area and perform activities in parallel rather than requiring one rover to visit every location sequentially. NASA states that multiple small autonomous robots could cover more ground and potentially help map previously unexplored regions. This distributed approach could therefore increase the area investigated within a limited mission period while also allowing measurements to be collected from several locations simultaneously.
+                        </li>
+                    </ul>
+                </article>
+
+                <article class="impact-column disadvantage">
+                    <span class="card-label">Disadvantages</span>
+                    <h3>What limitations and risks remain?</h3>
+
+                    <ul>
+                        <li>
+                            <strong>Greater development and testing demands:</strong>
+                            Coordinating several robots introduces more
+                            interactions that engineers must verify.
+                            A rover may operate correctly by itself yet
+                            behave unexpectedly when responding to other
+                            robots. NASA’s extensive hardware and software
+                            testing illustrates the effort needed to
+                            address these challenges. Automation can reduce
+                            some routine operational work while increasing
+                            the specialist effort required before deployment.
+                        </li>
+
+                        <li>
+                            <strong>
+                                Communication problems can reduce team effectiveness:
+                            </strong>
+                            Cooperative exploration depends on exchanging
+                            relevant information. JPL identifies obstructions
+                            and lunar surface conditions as challenges
+                            for communication between the robots. If
+                            information is delayed or unavailable, the
+                            system may need to revise or postpone coordinated
+                            activities. Consequently, adding more robots
+                            does not automatically produce a proportional
+                            increase in productivity.
+                        </li>
+
+                        <li>
+                            <strong>Shared infrastructure remains a vulnerability:</strong>
+                            The rovers depend on the lander for communication
+                            with Earth. Therefore, even functioning rovers
+                            could lose the ability to return results if
+                            that shared connection fails. This shows the
+                            limit of redundancy: having several mobile
+                            robots protects against some individual failures
+                            but cannot remove every mission-wide point
+                            of failure.
+                        </li>
+
+                        <li>
+                            <strong>Autonomous errors can have physical consequences:</strong>
+                            As an engineering risk, an incorrect interpretation
+                            of terrain could produce an unsuitable route
+                            or movement. Without a human approving every
+                            action, the system needs reliable constraints
+                            and recovery behaviour. NASA tested responses
+                            to unexpected obstacles and slippery surfaces,
+                            demonstrating why safe adaptation matters
+                            alongside successful task completion.
+                        </li>
+
+                        <li>
+                            <strong>Limited lifetime restricts the evidence gained:</strong>
+                            CADRE’s planned operation covers approximately
+                            14 Earth days of lunar daylight, and survival
+                            through lunar night is not expected. A successful
+                            demonstration would therefore provide evidence
+                            for those operating conditions, rather than
+                            establish that the same design could support
+                            long-duration exploration. Its short lifetime
+                            also raises an environmental consideration:
+                            developers should evaluate the value gained
+                            against the resources used and equipment
+                            remaining on the lunar surface.
+                        </li>
+
+                        <li>
+                            <strong>Trade offs caused by compact design:</strong>
+                            CADRE's small size makes the rovers easier to transport and allows several robots to be deployed together, but it also limits the resources available for computing, power and thermal management. NASA describes a difficult balance between keeping each rover compact and lightweight while providing enough computing power to run cooperative autonomy. The processor itself generates heat, adding to the challenge of operating in the hot lunar environment. CADRE therefore uses repeated wake-sleep cycles to manage temperature and recharge its batteries. This demonstrates that miniaturisation can increase deployment flexibility while also imposing significant engineering constraints.
+                        </li>
+                    </ul>
+                </article>
+            </div>
+
+            <div class="analysis-box">
+                <h3>Employment and job losses</h3>
+
+                <p>
+                    CADRE may change the type of human work required,
+                    but the reviewed sources do not establish that
+                    it has caused job losses. Its development involved
+                    NASA centres, commercial hardware specialists
+                    and university researchers.
+                </p>
+
+                <p>
+                    A reasonable inference is that increasing autonomy
+                    could reduce repetitive control tasks while increasing
+                    the importance of programming, testing, fault diagnosis
+                    and scientific interpretation. These roles require
+                    different skills, so any wider adoption should be
+                    accompanied by training.
+                </p>
+
+                <p>
+                    Whether employment ultimately increases or decreases
+                    would depend on how organisations use the technology
+                    and whether expanded exploration creates additional work.
+                </p>
+            </div>
+        </section>
+
+        <!-- Social, legal and ethical considerations -->
+        <section id="responsibility">
+            <div class="section-heading">
+                <p class="eyebrow">Responsible development</p>
+                <h2>Social, Legal and Ethical Considerations</h2>
+            </div>
+
+            <div class="three-columns">
+
+                <article class="card">
+                    <span class="category-icon">S</span>
+                    <h3>Social considerations</h3>
+
+                    <details open>
+                        <summary>Fair access to scientific knowledge</summary>
+                        <p>
+                            CADRE’s developers should consider how its
+                            findings can benefit people beyond the
+                            organisations involved in the mission.
+                            NASA’s Artemis principles support the public
+                            release of scientific results.
+                        </p>
+                        <p>
+                            Publishing well-documented data, explanations
+                            and educational resources would help universities
+                            and students without access to lunar missions
+                            participate in the research. However, access
+                            must be practical: highly technical information
+                            without suitable documentation may remain usable
+                            only by well-resourced specialists.
+                        </p>
+                    </details>
+
+                    <details>
+                        <summary>Changes to employment and skills</summary>
+                        <p>
+                            Autonomous coordination could change operators’
+                            responsibilities, placing greater emphasis on
+                            supervising systems, diagnosing faults and
+                            interpreting results. Developers should involve
+                            operators in interface design and provide
+                            training so they understand when to trust
+                            automated decisions and when intervention is needed.
+                        </p>
+                        <p>
+                            There is no evidence in the sources reviewed
+                            that CADRE itself has caused job losses; the
+                            relevant consideration is preparing people for
+                            changing work. Worker participation and training
+                            should be considered when introducing automation.
+                        </p>
+                    </details>
+
+                    <details>
+                        <summary>Public trust and responsible funding</summary>
+                        <p>
+                            As a publicly funded technology demonstration,
+                            CADRE should have clearly explained objectives
+                            and transparent reporting of results. Developers
+                            should distinguish demonstrated capabilities
+                            from future possibilities, particularly when
+                            discussing astronaut support or reduced
+                            operating costs.
+                        </p>
+                        <p>
+                            This allows the public to assess the value
+                            of the research. Reporting setbacks also matters:
+                            explaining what engineers learned from a failure
+                            can demonstrate accountability without presenting
+                            every experiment as a complete success.
+                        </p>
+                    </details>
+
+                    <details>
+                        <summary>Interoperability with other lunar systems</summary>
+                        <p>
+                            As lunar exploration involves increasing numbers of government and commerical organisations, future autonomous robots may need to operate alongside equipment developed by different organisations. Developers should therefore consider compatible communication, navigation and operational standards rather than designed systems entirely in insolation.
+                        </p>
+                        <p>
+                            The Artemis Accords encourage participating nations to use
+        existing interoperability standards and support the development
+        of new standards where necessary. For technologies developed
+        from CADRE, interoperability could become increasingly important
+        as multiple robotic and human systems operate within the same
+        lunar environment.
+                        </p>
+                    </details>
+                </article>
+
+                <article class="card">
+                    <span class="category-icon">L</span>
+                    <h3>Legal considerations</h3>
+
+                    <details open>
+                        <summary>Responsibility and liability</summary>
+                        <p>
+                            Article VI of the Outer Space Treaty establishes
+                            state responsibility for national space
+                            activities, including private activities.
+                            Article VII addresses launching-state liability
+                            for specified damage caused by space objects.
+                        </p>
+                        <p>
+                            CADRE’s autonomy does not remove these
+                            responsibilities. Mission organisations should
+                            define decision authority and preserve operational
+                            records to support investigation if damage occurs.
+                        </p>
+                    </details>
+
+                    <details>
+                        <summary>Avoiding harmful interference and contamination</summary>
+                        <p>
+                            Article IX of the Outer Space Treaty requires
+                            due regard for other states’ interests and
+                            avoidance of harmful contamination, with
+                            consultation where potentially harmful
+                            interference is anticipated.
+                        </p>
+                        <p>
+                            Developers should assess routes, disturbed
+                            dust and instrument operations for possible
+                            effects on other missions or investigations.
+                        </p>
+                    </details>
+
+                    <details>
+                        <summary>Peaceful use and no territorial claims</summary>
+                        <p>
+                            Article IV of the Outer Space Treaty requires
+                            peaceful use of the Moon, while Article II
+                            prohibits national appropriation. CADRE’s
+                            mapping activities therefore do not establish
+                            national ownership of the explored area.
+                        </p>
+                        <p>
+                            Mission boundaries should serve operational
+                            safety rather than territorial exclusion.
+                        </p>
+                    </details>
+                </article>
+
+                <article class="card">
+                    <span class="category-icon">E</span>
+                    <h3>Ethical considerations</h3>
+
+                    <details open>
+                        <summary>Accountability for autonomous decisions</summary>
+                        <p>
+                            Developers should ensure that an unexpected
+                            action can be investigated through records
+                            of sensor readings, instructions and planning
+                            decisions. Responsibility should remain clearly
+                            assigned to the organisations and people
+                            designing and operating the system.
+                        </p>
+                        <p>
+                            For example, if a rover repeatedly selects
+                            unsuitable routes, engineers should be able
+                            to determine whether the cause is inaccurate
+                            sensing, planning logic or inappropriate operating
+                            limits. This is a recommended application of
+                            responsible risk management, rather than a claim
+                            about CADRE’s exact logging arrangements.
+                        </p>
+                    </details>
+
+                    <details>
+                        <summary>Safety before task completion</summary>
+                        <p>
+                            The system should operate within defined
+                            limits and pause or revise activities when
+                            conditions become unsafe. NASA tested CADRE’s
+                            responses to unexpected obstacles and slippery
+                            surfaces, demonstrating the importance of
+                            handling situations that differ from the
+                            original plan.
+                        </p>
+                        <p>
+                            Ethically, developers should evaluate foreseeable
+                            failures as carefully as successful operation:
+                            completing an exploration task should not justify
+                            avoidable damage to equipment or risks to others.
+                        </p>
+                    </details>
+
+                    <details>
+                        <summary>Cybersecurity and data integrity</summary>
+                        <p>
+                            Developers should protect the system against
+                            unauthorised commands and altered information.
+                            In a mechatronic system, compromised data can
+                            influence physical movement, so cybersecurity
+                            is also a safety consideration.
+                        </p>
+                        <p>
+                            Recommended measures include controlled command
+                            access, checks on received messages and testing
+                            responses to invalid information. These are
+                            proposed safeguards; the public sources reviewed
+                            do not establish CADRE’s precise security
+                            implementation.
+                        </p>
+                    </details>
+
+                    <details>
+                        <summary>Protecting the lunar environment and future research</summary>
+                        <p>
+                            CADRE is designed for a short daylight mission,
+                            with lunar-night survival not expected.
+                            Developers should therefore consider the
+                            equipment remaining on the surface and
+                            minimise unnecessary disturbance.
+                        </p>
+                        <p>
+                            The ethical issue extends beyond immediate
+                            mission success: later researchers should still
+                            be able to investigate scientifically valuable
+                            areas. This suggests documenting disturbed
+                            locations and weighing the expected knowledge
+                            gained against the mission’s physical footprint.
+                        </p>
+                    </details>
+                </article>
+            </div>
+        </section>
+
+        <!-- Present and future significance -->
+        <section class="dark-section" id="future">
+            <div class="section-heading">
+                <p class="eyebrow">Present and future significance</p>
+                <h2>How could automated systems shape our future?</h2>
+            </div>
+
+            <div class="future-grid">
+                <div>
+                    <h3>Why mechatronic systems matter today</h3>
+
+                    <p>
+                        Mechatronic systems combine mechanical components,
+                        electronics, sensors and computer control.
+                        By using information from their surroundings
+                        to control physical actions, they can perform
+                        tasks with speed, precision and consistency.
+                    </p>
+
+                    <p>
+                       In manufacturing, automated machines perform repetitive tasks such as assembling and inspecting products. Modern automation can also improve the operation of production systems: McKinsey reports that successful Industry 4.0 implementations have been associated with 30–50% reductions in machine downtime, 10–30% increases in throughput and 15–30% improvements in labour productivity. This demonstrates why mechatronic systems are increasingly important not simply for replacing manual movement, but for making industrial processes more responsive and efficient.
+                    </p>
+
+                    <p>
+                        Mechatronics is also significant beyond manufacturing. In agriculture, sensors can monitor environmental conditions and provide information for automated irrigation or machinery. In hazardous environments, remotely operated or autonomous robots can inspect locations that would expose people to danger. In transport, mechatronic systems integrate sensors, electronic controllers and mechanical components in technologies such as anti-lock braking and autonomous emergency braking.
+                    </p>
+                    <p>
+                        These systems can improve productivity and reduce
+                        unnecessary resource use. However, their environmental
+                        benefits depend on how they are designed and used.
+                        Manufacturing electronics, supplying electricity
+                        and disposing of damaged equipment also consume
+                        resources and create waste.
+                    </p>
+
+                    <h3>Where CADRE fits</h3>
+
+                    <p>
+                        CADRE explores a further development: several
+                        robots coordinating their actions towards a shared
+                        objective. Each rover has limited power, sensing
+                        and mobility, but exchanging information allows
+                        the team to plan together and collect measurements
+                        from different locations.
+                    </p>
+
+                    <p>
+                        Its significance is therefore both technical
+                        and practical. It tests whether cooperative
+                        autonomy could make exploration less dependent
+                        on detailed human instructions while revealing
+                        the challenges of communication, coordination
+                        and fault recovery.
+                    </p>
+                </div>
+
+                <div>
+                    <h3>Possible future applications</h3>
+
+                    <div class="future-item">
+                        <strong>01</strong>
+                        <p>
+                            <b>Planetary exploration:</b>
+                            Future robot teams could divide an exploration
+                            area, share observations and collect simultaneous
+                            measurements. This could support investigations
+                            that would be difficult for one rover alone.
+                        </p>
+                    </div>
+
+                    <div class="future-item">
+                        <strong>02</strong>
+                        <p>
+                            <b>Astronaut support:</b>
+                            Cooperative robots could survey routes and
+                            investigate hazards before astronauts enter
+                            an area. This could help crews make
+                            better-informed decisions about where
+                            to travel and work.
+                        </p>
+                    </div>
+
+                    <div class="future-item">
+                        <strong>03</strong>
+                        <p>
+                            <b>Search and rescue:</b>
+                            Similar approaches could allow robots to
+                            explore different parts of a damaged building
+                            and share a map with rescuers. Unstable
+                            structures and unreliable communication
+                            would remain challenges.
+                        </p>
+                    </div>
+
+                    <div class="future-item">
+                        <strong>04</strong>
+                        <p>
+                            <b>Environmental monitoring:</b>
+                            Coordinated robots could collect measurements
+                            across forests, waterways or disaster-affected
+                            areas. Comparing observations from several
+                            locations could help researchers track changes.
+                        </p>
+                    </div>
+
+                    <div class="future-item">
+                        <strong>05</strong>
+                        <p>
+                            <b>Changing human work:</b>
+                            People may increasingly set objectives and
+                            supervise automated systems while machines
+                            handle detailed actions. Training would help
+                            workers move into programming, maintenance,
+                            analysis and oversight.
+                        </p>
+                    </div>
+
+                                        <div class="future-item">
+                        <strong>06</strong>
+
+                        <!-- Both paragraphs belong in the text column -->
+                        <div>
+                            <p>
+                                <b>From individual robots to cooperative intelligence:</b>
+                                CADRE demonstrates an important direction in the evolution of
+                                mechatronic and automated systems: intelligence does not have to
+                                be concentrated within one increasingly complex machine.
+                                Instead, several smaller machines can combine mechanical mobility,
+                                sensing, onboard computation and communication to create
+                                <strong>distributed intelligence</strong>. Each CADRE rover remains
+                                an individual mechatronic system, but communication and cooperative
+                                autonomy allow the three robots to function as a larger
+                                coordinated system.
+                            </p>
+
+                            <p style="margin-top: 16px;">
+                                This approach could influence future applications beyond lunar
+                                exploration. Teams of autonomous robots could distribute themselves
+                                across hazardous or inaccessible environments, divide tasks according
+                                to their locations and conditions, share discoveries and adapt their
+                                plans when conditions change. Potential applications include planetary
+                                exploration, disaster assessment and environmental monitoring.
+                                CADRE’s broader significance therefore lies in demonstrating a
+                                possible transition from
+                                <strong>single intelligent machines toward networks of cooperating
+                                intelligent machines</strong>.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- End of the right-hand column -->
+
+            </div>
+            <!-- End of future-grid -->
+
+            <blockquote>
+                Mechatronic and automated systems could improve safety,
+                productivity and environmental monitoring. However,
+                these benefits are not automatic. Their long-term value
+                depends on reliable operation, responsible resource use,
+                accessible training and clear human accountability.
+            </blockquote>
+
+      
+        </section>
+
+        <!-- Planning -->
+        <section class="light-section" id="planning">
+            <div class="section-heading">
+                <p class="eyebrow">Planning process</p>
+                <h2>Planning my CADRE website</h2>
+                <p>
+                    My planning is organised into six branches covering
+                    the website concept, research, design, interaction,
+                    accessibility and development.
+                </p>
+            </div>
+
+        <!-- Circular mind map -->
+<div class="cadre-map-scroll"
+     tabindex="0"
+     role="region"
+     aria-label="Website planning mind map. Scroll horizontally on smaller screens.">
+
+    <div class="cadre-map">
+
+        <!-- Lines connecting the seven circles -->
+        <svg class="cadre-map-lines"
+             viewBox="0 0 900 700"
+             aria-hidden="true">
+
+            <line x1="450" y1="350" x2="450" y2="110" />
+            <line x1="450" y1="350" x2="730" y2="230" />
+            <line x1="450" y1="350" x2="730" y2="470" />
+            <line x1="450" y1="350" x2="450" y2="590" />
+            <line x1="450" y1="350" x2="170" y2="470" />
+            <line x1="450" y1="350" x2="170" y2="230" />
+
+        </svg>
+
+        <div class="cadre-map-circle cadre-map-core">
+            CADRE<br>
+            Website<br>
+            Planning
+        </div>
+
+        <div class="cadre-map-circle cadre-map-one">
+            01<br>
+            Website concept
+        </div>
+
+        <div class="cadre-map-circle cadre-map-two">
+            02<br>
+            Research content
+        </div>
+
+        <div class="cadre-map-circle cadre-map-three">
+            03<br>
+            Visual design<br>
+            and layout
+        </div>
+
+        <div class="cadre-map-circle cadre-map-four">
+            04<br>
+            Navigation<br>
+            and interaction
+        </div>
+
+        <div class="cadre-map-circle cadre-map-five">
+            05<br>
+            Accessibility<br>
+            and responsive<br>
+            design
+        </div>
+
+        <div class="cadre-map-circle cadre-map-six">
+            06<br>
+            Development<br>
+            and evaluation
+        </div>
+
+    </div>
+</div>
+
+            <div class="three-columns">
+
+                <article class="card">
+                    <span class="card-label">Branch 01</span>
+                    <h3>Website concept</h3>
+                    <ul>
+                        <li>
+                            <strong>Purpose:</strong>
+                            Explain CADRE and analyse its mechatronic system.
+                        </li>
+                        <li>
+                            <strong>Audience:</strong>
+                            Year 10 students and teachers.
+                        </li>
+                        <li>
+                            <strong>Central idea:</strong>
+                            Three robots cooperating to explore the Moon.
+                        </li>
+                        <li>
+                            <strong>Theme:</strong>
+                            Space exploration and a mission-control appearance.
+                        </li>
+                        <li>
+                            <strong>Visitor/User experience:</strong>
+                            Progress from a simple introduction to detailed
+                            technical explanations.
+                        </li>
+                    </ul>
+                </article>
+
+                <article class="card">
+                    <span class="card-label">Branch 02</span>
+                    <h3>Research content</h3>
+                    <ul>
+                        <li>Purpose, personal interest and beneficiary groups.</li>
+                        <li>
+                            Development of mechatronics, planetary rovers,
+                            A-PUFFER and CADRE.
+                        </li>
+                        <li>Inputs, processes, outputs and feedback.</li>
+                        <li>Functional and non-functional requirements.</li>
+                        <li>
+                            Advantages, disadvantages, safety, access
+                            and employment.
+                        </li>
+                        <li>Social, legal and ethical considerations.</li>
+                        <li>Present significance and future applications.</li>
+                        <li>Reliable references and image credits.</li>
+                    </ul>
+                </article>
+
+                <article class="card">
+                    <span class="card-label">Branch 03</span>
+                    <h3>Visual design and layout</h3>
+                    <ul>
+                        <li>
+                            <strong>Colours:</strong>
+                            Dark navy, blue accents and contrasting text.
+                        </li>
+                        <li>
+                            <strong>Typography:</strong>
+                            Monospaced text with consistent heading sizes.
+                        </li>
+                        <li>
+                            <strong>Introduction:</strong>
+                            A clear title, short overview and rover visual.
+                        </li>
+                        <li>
+                            <strong>Content:</strong>
+                            Short paragraphs and explained dot points.
+                        </li>
+                        <li>
+                            <strong>Cards:</strong>
+                            Organise beneficiaries and system information.
+                        </li>
+                        <li>
+                            <strong>Comparisons:</strong>
+                            Display advantages and disadvantages side by side.
+                        </li>
+                        <li>
+                            <strong>Consistency:</strong>
+                            Matching borders, spacing and section styles.
+                        </li>
+                    </ul>
+                </article>
+
+                <article class="card">
+                    <span class="card-label">Branch 04</span>
+                    <h3>Navigation and interaction</h3>
+                    <ul>
+                        <li>Navigation links to each major section.</li>
+                        <li>Smooth scrolling and a back-to-top link.</li>
+                        <li>A rotatable 3D rover model.</li>
+                        <li>
+                            Explore adding clickable explanations
+                            of rover components.
+                        </li>
+                        <li>Expandable panels for detailed information.</li>
+                        <li>
+                            A feedback example linking sensor information,
+                            decisions and movement.
+                        </li>
+                        <li>
+                            Clear hover and keyboard-focus states
+                            for interactive elements.
+                        </li>
+                    </ul>
+                </article>
+
+                <article class="card">
+                    <span class="card-label">Branch 05</span>
+                    <h3>Accessibility and responsive design</h3>
+                    <ul>
+                        <li>Comfortable text size and readable line lengths.</li>
+                        <li>Clear contrast between text and backgrounds.</li>
+                        <li>Descriptive alternative text and image captions.</li>
+                        <li>Keyboard access to links and controls.</li>
+                        <li>Cards that stack vertically on small screens.</li>
+                        <li>Images and a model viewer that fit the screen.</li>
+                        <li>Buttons large enough for touch controls.</li>
+                        <li>Avoid distracting motion and automatic audio.</li>
+                        <li>Plan a rover image if the 3D model cannot load.</li>
+                    </ul>
+                </article>
+
+                <article class="card">
+                    <span class="card-label">Branch 06</span>
+                    <h3>Development and evaluation</h3>
+                    <ul>
+                        <li>Sketch the layout and organise research.</li>
+                        <li>Use HTML to structure the content.</li>
+                        <li>Use reusable CSS for appearance and layout.</li>
+                        <li>Add JavaScript where interaction requires it.</li>
+                        <li>Use VS Code for coding and Blender for modelling.</li>
+                        <li>Save versions and track changes through GitHub.</li>
+                        <li>
+                            Check sources and distinguish planned capabilities
+                            from demonstrated results.
+                        </li>
+                        <li>
+                            Test navigation, images, interactions
+                            and different screen sizes.
+                        </li>
+                        <li>
+                            Ask a classmate to find information and
+                            identify confusing areas.
+                        </li>
+                        <li>
+                            Proofread, check the assessment criteria
+                            and complete the bibliography.
+                        </li>
+                    </ul>
+                </article>
+            </div>
+        </section>
+
+        <!-- Bibliography -->
+        <section id="sources">
+            <div class="section-heading">
+                <p class="eyebrow">Research and website development</p>
+                <h2>Bibliography</h2>
+                <p>References formatted in APA 7th edition style.</p>
+            </div>
+
+            <div class="bibliography">
+
+                <p class="reference">
+                    Brennan, P. (2021, July 1).
+                    <i>NASA’s self-driving Perseverance Mars rover
+                    ‘takes the wheel’.</i>
+                    NASA Jet Propulsion Laboratory.
+                    <a href="https://www.jpl.nasa.gov/news/nasas-self-driving-perseverance-mars-rover-takes-the-wheel/">
+                        https://www.jpl.nasa.gov/news/nasas-self-driving-perseverance-mars-rover-takes-the-wheel/
+                    </a>
+                </p>
+
+                <p class="reference">
+                    Department of Industry, Science and Resources. (2024).
+                    <i>National robotics strategy.</i>
+                    Australian Government.
+                    <a href="https://www.industry.gov.au/sites/default/files/2024-05/national-robotics-strategy.pdf">
+                        https://www.industry.gov.au/sites/default/files/2024-05/national-robotics-strategy.pdf
+                    </a>
+                </p>
+
+                <p class="reference">
+                    GeeksforGeeks. (2025, July 22).
+                    <i>Build a responsive portfolio website using HTML and CSS.</i>
+                    <a href="https://www.geeksforgeeks.org/html/build-a-responsive-portfolio-website-using-html-and-css/">
+                        https://www.geeksforgeeks.org/html/build-a-responsive-portfolio-website-using-html-and-css/
+                    </a>
+                </p>
+
+                <p class="reference">
+                    GeeksforGeeks. (2026, July 20).
+                    <i>Create a website using HTML and CSS.</i>
+                    <a href="https://www.geeksforgeeks.org/web-templates/design-a-web-page-using-html-and-css/">
+                        https://www.geeksforgeeks.org/web-templates/design-a-web-page-using-html-and-css/
+                    </a>
+                </p>
+
+                <p class="reference">
+                    Habib, M. K. (2025).
+                    Mechatronics in industry 4.0 and 5.0: Advancing synergy,
+                    innovations, sustainability, and challenges.
+                    <i>Mechatronics Technology, 2025</i>(1), Article 0002.
+                    <a href="https://doi.org/10.55092/mt20250002">
+                        https://doi.org/10.55092/mt20250002
+                    </a>
+                </p>
+
+                <p class="reference">
+                    International Federation of Robotics. (2025, October 7).
+                    <i>World Robotics 2025 report – Service robots –
+                    released by IFR.</i>
+                    <a href="https://ifr.org/ifr-press-releases/news/service-robots-see-global-growth-boom">
+                        https://ifr.org/ifr-press-releases/news/service-robots-see-global-growth-boom
+                    </a>
+                </p>
+
+                <p class="reference">
+                    Jaiswal, A. K., &amp; Yadav, D. (2026).
+                    Optimizing energy conversion: The role of intelligent
+                    mechatronics in sustainable power generation.
+                    <i>Journal of Emerging Technologies and Innovative
+                    Research, 13</i>(3), 384–389.
+                    <a href="https://www.jetir.org/papers/JETIRHQ06064.pdf">
+                        https://www.jetir.org/papers/JETIRHQ06064.pdf
+                    </a>
+                </p>
+
+                <p class="reference">
+                    Jet Propulsion Laboratory. (n.d.-a).
+                    <i>CADRE.</i>
+                    NASA.
+                    <a href="https://www.jpl.nasa.gov/missions/cadre/">
+                        https://www.jpl.nasa.gov/missions/cadre/
+                    </a>
+                </p>
+
+                <p class="reference">
+                    Jet Propulsion Laboratory. (n.d.-b).
+                    <i>CADRE technology demonstration:
+                    Exploring the Moon as a team</i> [Fact sheet].
+                    NASA.
+                    <a href="https://d2pn8kiwq2w21t.cloudfront.net/documents/CADRE-Fact-Sheet.pdf">
+                        https://d2pn8kiwq2w21t.cloudfront.net/documents/CADRE-Fact-Sheet.pdf
+                    </a>
+                </p>
+
+                <p class="reference">
+                    Jet Propulsion Laboratory. (2013, August 27).
+                    <i>NASA’s Mars Curiosity debuts autonomous navigation.</i>
+                    NASA.
+                    <a href="https://www.jpl.nasa.gov/news/nasas-mars-curiosity-debuts-autonomous-navigation/">
+                        https://www.jpl.nasa.gov/news/nasas-mars-curiosity-debuts-autonomous-navigation/
+                    </a>
+                </p>
+                
+                <p class="reference">
+    Jet Propulsion Laboratory. (n.d.-c).
+    <i>CADRE mission overview.</i>
+    NASA.
+    <a href="https://robotics.jpl.nasa.gov/what-we-do/flight-projects/cooperative-autonomous-distributed-robotic-exploration-cadre/cadre-mission-overview/">
+        https://robotics.jpl.nasa.gov/what-we-do/flight-projects/cooperative-autonomous-distributed-robotic-exploration-cadre/cadre-mission-overview/
+    </a>
+</p>
+
+<p class="reference">
+    Jet Propulsion Laboratory. (n.d.-d).
+    <i>CADRE software.</i>
+    NASA.
+    <a href="https://robotics.jpl.nasa.gov/what-we-do/flight-projects/cooperative-autonomous-distributed-robotic-exploration-cadre/cadre-software/">
+        https://robotics.jpl.nasa.gov/what-we-do/flight-projects/cooperative-autonomous-distributed-robotic-exploration-cadre/cadre-software/
+    </a>
+</p>
+
+                <p class="reference">
+                    Jet Propulsion Laboratory. (2023, August 2).
+                    <i>NASA’s trio of mini rovers will team up to explore the Moon.</i>
+                    NASA.
+                    <a href="https://www.jpl.nasa.gov/news/nasas-trio-of-mini-rovers-will-team-up-to-explore-the-moon/">
+                        https://www.jpl.nasa.gov/news/nasas-trio-of-mini-rovers-will-team-up-to-explore-the-moon/
+                    </a>
+                </p>
+
+                <p class="reference">
+                    Jet Propulsion Laboratory. (2024a, March 7).
+                    <i>Completed CADRE rover in the clean room</i> [Photograph].
+                    NASA.
+                    <a href="https://www.jpl.nasa.gov/images/pia26169-completed-cadre-rover-in-the-clean-room/">
+                        https://www.jpl.nasa.gov/images/pia26169-completed-cadre-rover-in-the-clean-room/
+                    </a>
+                </p>
+
+                <p class="reference">
+                    Jet Propulsion Laboratory. (2024b, March 7).
+                    <i>NASA’s CADRE rovers take first autonomous drive</i>
+                    [Photograph].
+                    NASA.
+                    <a href="https://www.jpl.nasa.gov/images/pia26164-nasas-cadre-rovers-take-first-autonomous-drive/">
+                        https://www.jpl.nasa.gov/images/pia26164-nasas-cadre-rovers-take-first-autonomous-drive/
+                    </a>
+                </p>
+
+                <p class="reference">
+                    Jet Propulsion Laboratory. (2024c, March 7).
+                    <i>NASA’s network of small Moon-bound rovers is ready to roll.</i>
+                    NASA.
+                    <a href="https://www.jpl.nasa.gov/news/nasas-network-of-small-moon-bound-rovers-is-ready-to-roll/">
+                        https://www.jpl.nasa.gov/news/nasas-network-of-small-moon-bound-rovers-is-ready-to-roll/
+                    </a>
+                </p>
+
+                <p class="reference">
+                    Jet Propulsion Laboratory. (2026, June 22).
+                    <i>NASA’s mini rover team is packed for lunar journey.</i>
+                    NASA.
+                    <a href="https://www.nasa.gov/missions/tech-demonstration/cadre/nasas-mini-rover-team-is-packed-for-lunar-journey/">
+                        https://www.nasa.gov/missions/tech-demonstration/cadre/nasas-mini-rover-team-is-packed-for-lunar-journey/
+                    </a>
+                </p>
+
+                <p class="reference">
+                    Matenga, H. R., Mupa, M. N., &amp; Musemwa, O. B. (2025).
+                    Artificial intelligence-driven mechatronic system for
+                    energy efficiency in U.S manufacturing industries.
+                    <i>Iconic Research and Engineering Journals, 9</i>(3), 792–801.
+                    <a href="https://doi.org/10.64388/IREV9I3-1710658-1422">
+                        https://doi.org/10.64388/IREV9I3-1710658-1422
+                    </a>
+                </p>
+
+                <p class="reference">
+    McKinsey &amp; Company. (2022, April 13).
+    <i>Capturing the true value of Industry 4.0.</i>
+    <a href="https://www.mckinsey.com/capabilities/operations/our-insights/capturing-the-true-value-of-industry-four-point-zero">
+        https://www.mckinsey.com/capabilities/operations/our-insights/capturing-the-true-value-of-industry-four-point-zero
+    </a>
+</p>
+
+                <p class="reference">
+                    National Aeronautics and Space Administration. (n.d.-a).
+                    <i>Artemis accords.</i>
+                    <a href="https://www.nasa.gov/artemis-accords/">
+                        https://www.nasa.gov/artemis-accords/
+                    </a>
+                </p>
+
+                <p class="reference">
+                    National Aeronautics and Space Administration. (n.d.-b).
+                    <i>Mars exploration rovers: Spirit and Opportunity.</i>
+                    <a href="https://science.nasa.gov/mission/mars-exploration-rovers-spirit-and-opportunity/">
+                        https://science.nasa.gov/mission/mars-exploration-rovers-spirit-and-opportunity/
+                    </a>
+                </p>
+
+                <p class="reference">
+                    National Aeronautics and Space Administration. (n.d.-c).
+                    <i>Mars Pathfinder.</i>
+                    <a href="https://science.nasa.gov/mission/mars-pathfinder/">
+                        https://science.nasa.gov/mission/mars-pathfinder/
+                    </a>
+                </p>
+
+                <p class="reference">
+                    Onu, P., Pradhan, A., &amp; Mbohwa, C. (2024).
+                    Smart mechatronics: Innovating sustainable solutions
+                    for the future.
+                    In <i>Proceedings of the 5th African International
+                    Conference on Industrial Engineering and Operations
+                    Management</i> (pp. 1037–1047).
+                    IEOM Society International.
+                    <a href="https://ieomsociety.org/proceedings/2024johannesburg/211.pdf">
+                        https://ieomsociety.org/proceedings/2024johannesburg/211.pdf
+                    </a>
+                </p>
+
+                <p class="reference">
+    Rabideau, G., Russino, J., Branch, A., Dhamani, N.,
+    Vaquero, T. S., de la Croix, J.-P., &amp; Rossi, F. (2025).
+    <i>Multi-robot cooperative autonomy on the Moon:
+    The CADRE technology demonstration mission.</i>
+    Proceedings of the 18th Symposium on Advanced Space
+    Technologies in Robotics and Automation.
+    <a href="https://ai.jpl.nasa.gov/public/documents/papers/CADRE-ASTRA-2025-Extended-Abstract.pdf">
+        https://ai.jpl.nasa.gov/public/documents/papers/CADRE-ASTRA-2025-Extended-Abstract.pdf
+    </a>
+</p> 
+
+                <p class="reference">
+                    Robot Magazine. (n.d.).
+                    <i>Robots: Cleaning up 34%, medical robotics up 91%.</i>
+                    <a href="https://www.robot-magazine.fr/en/robots-cleaning-up-34-medical-robotics-up-91/">
+                        https://www.robot-magazine.fr/en/robots-cleaning-up-34-medical-robotics-up-91/
+                    </a>
+                </p>
+
+                <p class="reference">
+                    United Nations Office for Outer Space Affairs. (n.d.).
+                    <i>Treaty on principles governing the activities of
+                    states in the exploration and use of outer space,
+                    including the Moon and other celestial bodies.</i>
+                    <a href="https://www.unoosa.org/oosa/en/ourwork/spacelaw/treaties/outerspacetreaty.html">
+                        https://www.unoosa.org/oosa/en/ourwork/spacelaw/treaties/outerspacetreaty.html
+                    </a>
+                </p>
+
+                <p class="reference">
+    Yaskawa Electric Corporation. (n.d.-a).
+    <i>Milestones: 1960s.</i>
+    <a href="https://www.yaskawa-global.com/milestones/1960s">
+        https://www.yaskawa-global.com/milestones/1960s
+    </a>
+</p>
+
+<p class="reference">
+    Yaskawa Electric Corporation. (n.d.-b).
+    <i>Strengths of Yaskawa.</i>
+    <a href="https://www.yaskawa-global.com/ir/individual/strengths">
+        https://www.yaskawa-global.com/ir/individual/strengths
+    </a>
+</p>
+
+                <!-- Add the original sources of the remaining
+                     timeline images here before submitting. -->
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div>
+            <strong>CADRE Rovers</strong>
+            <p>Mechatronics and Automated Systems</p>
+        </div>
+
+        <div>
+            <p> Year 10 Computing Technology</p>
+            <a href="#top">Back to top ↑</a>
+        </div>
+    </footer>
+
+</body>
+</html>
